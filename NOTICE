@@ -1,0 +1,32 @@
+Inference-Optimization Campaign Prompt (a reconstruction)
+Copyright (c) 2026 Santosh Bhavani
+
+Licensed under the Creative Commons Attribution 4.0 International License
+(CC BY 4.0). See LICENSE.
+
+-------------------------------------------------------------------------------
+THIS IS NOT AN ANTHROPIC DOCUMENT
+-------------------------------------------------------------------------------
+
+This repository contains a reconstruction written by reading Anthropic's
+published technical report and code release. It is not a leaked, recovered, or
+official Anthropic artifact, and it is not affiliated with, endorsed by, or
+produced by Anthropic. The prompt that drove the work described in "How Claude
+is uplifting biomolecular modeling" was not published.
+
+-------------------------------------------------------------------------------
+ATTRIBUTION
+-------------------------------------------------------------------------------
+
+This work incorporates material from:
+
+  Anthropic, "De novo miniprotein binder design campaign: prompt release
+  bundle", in the dataset Anthropic/claude-protein-binder-design
+  https://huggingface.co/datasets/Anthropic/claude-protein-binder-design
+  Licensed under CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+  Changes were made.
+
+The specific passages reused are itemized in ATTRIBUTION.md.
+
+"Claude" and "Anthropic" are used nominatively, to identify the published work
+this reconstruction is about.
