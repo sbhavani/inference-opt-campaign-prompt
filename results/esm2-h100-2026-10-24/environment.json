@@ -1,0 +1,21 @@
+{
+  "source_repo": "https://github.com/NVIDIA-BioNeMo/bionemo-recipes",
+  "source_commit": "fe8385e4cf4695dd15aca5665ae39aac51892a6f",
+  "checkpoint": "nvidia/esm2_t33_650M_UR50D",
+  "checkpoint_revision": "118f470e7e96ba8741227ab898e54758850e9563",
+  "gpu": "NVIDIA H100 PCIe 80 GB",
+  "precision": "BF16",
+  "torch": "2.14.0a0+b2c75dd062.nv26.09",
+  "cuda": "13.4",
+  "cudnn": 92600,
+  "transformer_engine": "2.19.0+5e52befd",
+  "transformers": "5.5.0",
+  "base_image_digest": "nvcr.io/nvidia/pytorch@sha256:6e8ccc607fc2a51e3741667b86316a0889418ba8b78ed0ba96e8d282b648a7a6",
+  "actual_image_id": "sha256:0ed2414474e25b1eb0040685042f32fe8607319523d977b0e8b6b9dd51537c1b",
+  "deterministic_algorithms": true,
+  "fill_uninitialized_memory": false,
+  "tf32": false,
+  "cublas_workspace_config": ":4096:8",
+  "cpu_threads": 8,
+  "dataset_sha256": "dfb15914064b553791cd571a4c2e17acad92a4c28baac8855e7c20947696d609"
+}

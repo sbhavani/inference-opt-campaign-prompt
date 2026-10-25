@@ -84,4 +84,4 @@ This adaptation is original prompt design, not part of the reconstructed Anthrop
 
 The H100 resource default, workload matrix, 100-sequence minimum, NRMSE/cosine/NLL limits, and suggested
 optimization order are campaign choices. They are not published BioNeMo benchmark results or validated
-biological noninferiority thresholds. GPU profiling and performance verification remain to be run.
+biological noninferiority thresholds. A completed pilot, including scope and limitations, is documented in [the H100 result report](results/esm2-h100-2026-10-24/README.md).

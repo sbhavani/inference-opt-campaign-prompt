@@ -6,12 +6,13 @@ Two prompts for an autonomous campaign to optimize **ESM-2 650M protein embeddin
 This adapts the repository's independent reconstruction inspired by
 [Anthropic's biomolecular modeling article](https://www.anthropic.com/research/claude-uplifts-biomolecular-modeling).
 **It is not an official, leaked, or recovered Anthropic prompt.** The target, workload, acceptance limits,
-and repository workflow are our campaign choices. No performance result is claimed here.
+and repository workflow are our campaign choices. The prompts do not promise a speed-up; a completed H100 pilot is documented below.
 
 | File | Purpose |
 |---|---|
 | [Campaign prompt](prompts/inference_opt_campaign_prompt.md) | Full target, verification, benchmark, and delivery contract |
 | [Kickoff message](prompts/kickoff_message.md) | User message that starts a configured run |
+| [Completed H100 pilot](results/esm2-h100-2026-10-24/README.md) | Measured results, numerical verification, and limitations |
 | [Sources](SOURCES.md) | Original reconstruction sources and BioNeMo adaptation references |
 | [Attribution](ATTRIBUTION.md) | CC BY 4.0 attribution for reused material |
 
@@ -20,7 +21,7 @@ and repository workflow are our campaign choices. No performance result is claim
 The encoder already uses Transformer Engine and supports packed inputs. The useful question is how much
 headroom remains around that optimized baseline: repeated RoPE/mask setup, packed token-dropout scaling,
 pack/unpack costs, and launch overhead. Profiles decide which opportunities deserve implementation.
-These source-level observations are hypotheses, not established bottlenecks. This target has ordinary
+These are profiling candidates; the completed pilot identifies the one that produced a measured improvement. This target has ordinary
 encoder attention rather than triangle attention.
 
 The campaign uses BF16 TE as its primary baseline, fixed lengths of 64–1024 total tokens, fixed batches

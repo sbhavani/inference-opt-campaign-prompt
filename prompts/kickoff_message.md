@@ -1,7 +1,7 @@
-# BioNeMo ESM-2 campaign kickoff (the T0 user turn)
+# BioNeMo ESM-2 campaign kickoff (setup, then the timed hour)
 
 > Companion to `inference_opt_campaign_prompt.md`. Configured for a one-hour Brev H100 pilot.
-> This message starts an optimization run; editing these prompt files does not start one.
+> This message authorizes setup; the optimization clock starts after readiness. Editing these files does not start a run.
 
 Execute the BioNeMo Recipes ESM-2 embedding-inference campaign defined in the attached campaign prompt.
 Carry the prompt and the repository instructions into any delegated work. You are the orchestrator.
