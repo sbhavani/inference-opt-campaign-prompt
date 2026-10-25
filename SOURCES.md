@@ -63,3 +63,25 @@ Reused wording is itemized in [`ATTRIBUTION.md`](ATTRIBUTION.md).
   arXiv:2205.14135.
 - Tillet, P., Kung, H. T. & Cox, D. "Triton: an intermediate language and compiler for tiled neural network
   computations." MAPL 2019.
+
+
+## BioNeMo ESM-2 adaptation
+
+The two prompts were adapted to BioNeMo Recipes at commit
+[`fe8385e4cf4695dd15aca5665ae39aac51892a6f`](https://github.com/NVIDIA-BioNeMo/bionemo-recipes/tree/fe8385e4cf4695dd15aca5665ae39aac51892a6f).
+This adaptation is original prompt design, not part of the reconstructed Anthropic material above.
+
+- [Canonical ESM-2 model](https://github.com/NVIDIA-BioNeMo/bionemo-recipes/blob/fe8385e4cf4695dd15aca5665ae39aac51892a6f/models/esm2/modeling_esm_te.py):
+  encoder/RoPE setup, BSHD and THD embeddings, mask conversion, token-dropout scaling, and output semantics.
+- [ESM-2 documentation](https://github.com/NVIDIA-BioNeMo/bionemo-recipes/blob/fe8385e4cf4695dd15aca5665ae39aac51892a6f/models/esm2/README.md):
+  checkpoints, inference API, packing, and existing low-precision support.
+- [Model tests](https://github.com/NVIDIA-BioNeMo/bionemo-recipes/blob/fe8385e4cf4695dd15aca5665ae39aac51892a6f/models/esm2/tests/test_modeling_esm_te.py):
+  shared `BaseModelTest`, golden/conversion checks, and model-specific test hooks.
+- [vLLM tests](https://github.com/NVIDIA-BioNeMo/bionemo-recipes/blob/fe8385e4cf4695dd15aca5665ae39aac51892a6f/recipes/vllm_inference/esm2/tests/test_vllm.py):
+  existing last-token L2-normalized embedding oracle and runtime configuration.
+- [Copy mappings](https://github.com/NVIDIA-BioNeMo/bionemo-recipes/blob/fe8385e4cf4695dd15aca5665ae39aac51892a6f/ci/scripts/check_copied_files.py):
+  canonical sources and generated recipe copies.
+
+The H100 resource default, workload matrix, 100-sequence minimum, NRMSE/cosine/NLL limits, and suggested
+optimization order are campaign choices. They are not published BioNeMo benchmark results or validated
+biological noninferiority thresholds. A completed pilot, including scope and limitations, is documented in [the H100 result report](results/esm2-h100-2026-10-24/README.md).
