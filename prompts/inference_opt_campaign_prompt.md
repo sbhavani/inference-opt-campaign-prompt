@@ -31,10 +31,10 @@ second, and coverage of realistic sequence lengths and mixed-length batches thir
 - Primary checkpoint: `nvidia/esm2_t33_650M_UR50D`; smoke checkpoint: `nvidia/esm2_t6_8M_UR50D`.
   Resolve both to immutable Hub revisions and hash all weights, config, tokenizer, and remote model code.
   Exercise the local source at the pinned BioNeMo commit; do not accidentally benchmark only Hub code.
-- Hardware: one dedicated NVIDIA H100 80 GB by default. An explicitly assigned alternative is allowed;
+- Hardware: one dedicated NVIDIA H100 80 GB through Brev. An explicitly assigned alternative is allowed;
   record its exact model, capacity, compute capability, driver, and supported precision features.
-- Resource limits: `<GPU_HOURS>` GPU-hours and `<HOURS>` wall-clock hours; report every `<CADENCE>`.
-  Resolve these values in the kickoff before starting. Do not provision or spend beyond assigned resources.
+- Resource limits: **1 GPU-hour maximum and 60 minutes wall time**, including setup, verification, and cleanup; report every **10 minutes**.
+  The allocation deadline is 60 minutes after the instance creation request, conservatively including boot time.\n  Record any provider billing start separately. Do not extend the allocation to compensate for slow setup.
 - Primary interface: `NVEsmModel` / `AutoModel` encoder forward in `eval()` and `torch.inference_mode()`.
   Preserve `last_hidden_state`, optional hidden states, and any requested pooler output.
 - Lengths: 64, 128, 256, 512, and 1024 **total tokens including BOS/EOS**. Respect the pinned config's
@@ -47,6 +47,44 @@ second, and coverage of realistic sequence lengths and mixed-length batches thir
   corpus and use the same maximum batch/token budget; also report fixed-batch latency separately.
 - Primary precision: BF16. Existing FP8/MXFP8/FP4 paths are separate experiments with their own baselines,
   hardware requirements, and correctness gates; enabling an existing option is not a new optimization.
+
+### One-hour pilot scope and Brev lifecycle [inferred]
+
+The full matrix above is the eventual campaign scope. For this one-hour pilot, predeclare and freeze the
+mandatory subset **before** any candidate work: BF16 650M, lengths 128/512/1024, batches 1 and 4, plus one
+mixed-length batch of 4. The 8M checkpoint is a smoke check only. Retain the 100-sequence held-out correctness
+minimum and the same numerical gates; cycle those sequences through the selected workload cells.
+Lengths 64/256, batches of 16, low precision, vLLM, and `big` are deferred unless the mandatory work finishes
+early. Report every omitted cell. Do not weaken correctness or use an unfinished sweep for a headline claim.
+
+Use this time allocation as a ceiling, measured from the creation request:
+
+- Minutes 0–15: boot, pinned environment and weights, 8M smoke check, workload manifests.
+- Minutes 15–25: 650M references, existing best-configuration comparison, small/large/mixed profiles.
+- Minutes 25–40: one profile-supported change, preferably repeated setup or another small measured gap.
+- Minutes 40–50: final clean timing, held-out correctness, focused regressions, and ablation.
+- Minutes 50–60: export the patch/results, verify local checksums, and complete authorized cleanup.
+
+If setup misses its window, reduce optimization effort first. If final evidence cannot be completed,
+deliver a profiling/baseline report or label the candidate unverified. Do not spend a second hour to finish.
+Start cleanup early enough to account for API delays. A remote `timeout` or guest shutdown only stops work;
+it does not prove provider billing has ended. Report any cleanup failure immediately.
+
+Before allocation, run `brev ls --json` and `brev search --gpu-name H100 --sort price --json`.
+Prefer a matching idle, user-assigned instance; otherwise show the chosen single-GPU type and current price.
+The initial quote was `hyperstack_H100`, H100 80 GB, $3/hour, with stop unsupported. Recheck price and
+capacity at launch. This is a listing, not a guaranteed total charge or capacity reservation.
+Use only one instance named `esm2-opt-1h-20261024`, checking for collisions first. Explicit creation syntax:
+`brev create esm2-opt-1h-20261024 --type hyperstack_H100 --count 1 --timeout 600`.
+Do not fall back to a more expensive or multi-GPU type without authorization. Verify the actual device
+with `brev exec esm2-opt-1h-20261024 "nvidia-smi"` before loading the campaign.
+
+Authentication is user-owned: if logged out, ask the user to run `brev login`; never request their token.
+Copy scripts with `brev copy`, execute through `brev exec`, and impose the remaining deadline on every
+remote job. Save results locally before deleting ephemeral storage. Deletion of this specific instance must
+be explicitly authorized; when authorized, use `brev delete esm2-opt-1h-20261024` and verify its final state
+with `brev ls --json`. No unrelated instance may be stopped, reset, or deleted. Do not start a new allocation
+without an authorized cleanup path or an explicit user choice to retain the instance and ongoing billing.
 
 Read the repository's `AGENTS.md` and any closer instructions. Relevant source and tests:
 
@@ -310,7 +348,7 @@ shippable only with final clean measurements and its matching correctness eviden
 
 ## Compute *[inferred]*
 
-Budget: `<GPU_HOURS>` GPU-hours on the assigned single card, with `<HOURS>` hours wall time. Spend it in this proportion as a starting point: profiling and reference
+Budget: **1 GPU-hour / 60 minutes total allocation** on the assigned single H100 through Brev. Spend it in this proportion as a starting point: profiling and reference
 establishment first and generously, since every later number depends on it; then optimization; then the final
 clean benchmark sweep, which must be run on a quiet machine with nothing else resident. Do not interleave the
 final sweep with development work on the same device. Report spend against budget in every update.

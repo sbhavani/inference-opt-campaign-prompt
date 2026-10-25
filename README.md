@@ -31,11 +31,18 @@ separate track with its existing last-token L2-normalized pooling contract.
 ## Using the prompts
 
 1. Supply the campaign prompt as the run's governing instructions, subject to the host's instruction hierarchy.
-2. Fill `<GPU_HOURS>`, `<HOURS>`, and `<CADENCE>` in the kickoff and matching campaign resource fields.
-   Assign one dedicated H100 80 GB, or record an explicitly assigned substitute. These prompts do not
-   authorize provisioning or unbounded spending.
+2. The kickoff is configured for **one H100 through Brev, one GPU-hour / 60 minutes total allocation**,
+   with updates every 10 minutes. This includes setup and cleanup. Recheck the quoted $3/hour
+   `hyperstack_H100` price/capacity; no higher-cost fallback is authorized. Authenticate with `brev login`.
+   Resolve deletion authorization for the named instance, or explicitly choose retention and ongoing billing,
+   before creating it. A remote job timeout does not terminate provider billing.
 3. Verify the pinned BioNeMo commit and resolve immutable checkpoint revisions and the container digest.
 4. Send the completed kickoff. Merely editing these files does not start a campaign.
+
+The one-hour pilot prioritizes lengths 128/512/1024 at batches 1 and 4, one mixed batch of 4, and at most
+one focused optimization. The broader matrix remains deferred. It reserves the last 20 minutes for final
+verification, result export, and cleanup; setup delays reduce optimization time rather than extend billing.
+No speed-up is promised within one hour.
 
 The campaign requires reference establishment before optimization, a quiet GPU, bracketed timing repeats,
 and a final clean benchmark sweep. It produces a scoped BioNeMo patch or draft PR, focused regression tests,

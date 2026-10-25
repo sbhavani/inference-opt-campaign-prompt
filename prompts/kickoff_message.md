@@ -1,6 +1,6 @@
 # BioNeMo ESM-2 campaign kickoff (the T0 user turn)
 
-> Companion to `inference_opt_campaign_prompt.md`. Fill the three resource placeholders before sending.
+> Companion to `inference_opt_campaign_prompt.md`. Configured for a one-hour Brev H100 pilot.
 > This message starts an optimization run; editing these prompt files does not start one.
 
 Execute the BioNeMo Recipes ESM-2 embedding-inference campaign defined in the attached campaign prompt.
@@ -13,11 +13,20 @@ Commit: `fe8385e4cf4695dd15aca5665ae39aac51892a6f`.
 Primary checkpoint: `nvidia/esm2_t33_650M_UR50D`; smoke checkpoint: `nvidia/esm2_t6_8M_UR50D`.
 Use local model source at that commit and resolve immutable Hub revisions before loading weights.
 
-Assigned device: one dedicated NVIDIA H100 80 GB, or the explicitly assigned substitute recorded at T0.
-Budget: `<GPU_HOURS>` GPU-hours. Wall-clock deadline: T0 + `<HOURS>` hours. Update every `<CADENCE>`.
-T0 is receipt of this completed kickoff. Record its timestamp and the deadline in UTC.
-If placeholders are unresolved or no GPU is assigned, report the missing resources and perform only local
-inspection; do not start the clock, provision compute, or infer spending authority.
+Assigned device: one dedicated Brev H100 80 GB, single GPU. Prefer the quoted `hyperstack_H100` at $3/hour
+after rechecking its current price and capacity. Instance name: `esm2-opt-1h-20261024`.
+Budget: **1 GPU-hour, at most 60 minutes of allocation including boot/setup and cleanup**.
+Update every **10 minutes**. Record the instance creation-request time in UTC and set the allocation
+deadline to 60 minutes later; do not start that clock while waiting for user authentication. Start cleanup
+at minute 50 or earlier. Record the actual provider billing interval separately; do not promise an exact
+$3 total, since billing and deletion delays may differ from compute runtime.
+
+This kickoff authorizes one single-H100 allocation for this campaign, at the displayed accepted rate;
+no multi-GPU or higher-cost fallback. Run `brev ls --json` first. If logged out, have the user run
+`brev login`. Show the selected cost/type before creation. Confirm authorization to delete only this
+named instance after saving results, or an explicit user choice to retain it with continuing billing,
+before allocating; the quoted type does not support stop. Never touch unrelated instances.
+
 Other resident GPU workloads invalidate the quiet-device protocol; report contention before benchmarking.
 
 First actions, in order:
@@ -26,7 +35,8 @@ First actions, in order:
    and campaign tag `optkit-esm2-<YYYY-MM-DD>-<runid8>`. Read root and closer `AGENTS.md` files.
 2. Verify the BioNeMo pin, immutable checkpoint revisions, checksums, image digest, and dependency versions.
    Freeze the 100-sequence minimum corpus, a distinct held-out correctness set, masks, and batch manifests.
-   Use total token lengths 64/128/256/512/1024 including BOS/EOS; fixed batches 1/4/16 and mixed batches of 16.
+   For this pilot, use total token lengths 128/512/1024 including BOS/EOS; batches 1 and 4 plus a mixed
+   batch of 4. Keep the campaign prompt's 100-sequence held-out minimum. Defer the broader matrix explicitly.
 3. Establish the reference ledger for BF16 TE workloads before optimizing. An 8M smoke run is not a 650M
    reference. Record OOM cells and unavailable checks. Block optimization on missing reference evidence.
 4. Establish `base` (unmodified BF16 TE defaults) and `default` (best applicable existing TE kernels, layout,
@@ -37,7 +47,9 @@ First actions, in order:
    Seed spread does not define a tolerance for deterministic ESM-2. Preserve masked-LM regressions when
    shared code changes and the existing vLLM last-token L2-normalized pooling contract if that track is used.
 6. Profile small, medium, large, and mixed-length workloads. Post a ranked list of measured opportunities
-   in the chat or external results bundle, not a planning document committed to the repository. Then begin.
+   in the chat or external results bundle, not a planning document committed to the repository. Then attempt at most one focused change, reserving minutes 40–50 for final verification
+   and minutes 50–60 for results export and authorized cleanup. If setup consumes the time, deliver evidence
+   of the blocker or the baseline instead of extending the allocation.
 
 Investigate repeated RoPE/mask setup, packed token-dropout scaling, remaining pack/unpack costs, and graph or
 compiler opportunities only as the profiles justify them. Existing THD/low-precision support is a baseline
@@ -50,5 +62,6 @@ remaining assigned resources.
 
 Finish with a scoped BioNeMo patch or draft PR, focused tests, regenerated mapped copies, reproducible
 benchmark commands, and the clean final results bundle. Preserve the immutable reference. Report unavailable
-GPU checks and unsupported modes honestly. Do not provision compute or publish issues/messages without
-separate authorization. Begin when the resource fields and dedicated device are resolved.
+GPU checks and unsupported modes honestly. Provision only the authorized single Brev instance; do not publish issues/messages without separate
+authorization. Verify result copies and final instance state after authorized deletion. A job timeout alone
+does not stop billing. Begin once Brev authentication and the named-instance cleanup choice are resolved.
