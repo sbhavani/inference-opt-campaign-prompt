@@ -32,8 +32,8 @@ separate track with its existing last-token L2-normalized pooling contract.
 
 1. Supply the campaign prompt as the run's governing instructions, subject to the host's instruction hierarchy.
 2. The kickoff is configured for **one H100 through Brev, one GPU-hour / 60 minutes total allocation**,
-   with updates every 10 minutes. This includes setup and cleanup. Recheck the quoted $3/hour
-   `hyperstack_H100` price/capacity; no higher-cost fallback is authorized. Authenticate with `brev login`.
+   with updates every 10 minutes. This includes setup and cleanup. Recheck the quoted $3.948/hour
+   `gpu_1x_h100_pcie` price/capacity; no higher-cost fallback is authorized. Authenticate with `brev login`.
    Resolve deletion authorization for the named instance, or explicitly choose retention and ongoing billing,
    before creating it. A remote job timeout does not terminate provider billing.
 3. Verify the pinned BioNeMo commit and resolve immutable checkpoint revisions and the container digest.

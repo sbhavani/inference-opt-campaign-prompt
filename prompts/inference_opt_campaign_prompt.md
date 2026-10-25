@@ -72,10 +72,12 @@ it does not prove provider billing has ended. Report any cleanup failure immedia
 
 Before allocation, run `brev ls --json` and `brev search --gpu-name H100 --sort price --json`.
 Prefer a matching idle, user-assigned instance; otherwise show the chosen single-GPU type and current price.
-The initial quote was `hyperstack_H100`, H100 80 GB, $3/hour, with stop unsupported. Recheck price and
-capacity at launch. This is a listing, not a guaranteed total charge or capacity reservation.
+The authenticated, user-approved quote is `gpu_1x_h100_pcie`, H100 80 GB, $3.948/hour, with stop unsupported. Recheck price and
+capacity at launch. Public search listings may include types absent from the authenticated organization
+catalog; a public listing alone does not establish provisioning eligibility. Hyperstack's $3/hour listing
+was rejected for this account, so the user approved the Lambda single H100 at $3.948/hour. This is a listing, not a guaranteed total charge or capacity reservation.
 Use only one instance named `esm2-opt-1h-20261024`, checking for collisions first. Explicit creation syntax:
-`brev create esm2-opt-1h-20261024 --type hyperstack_H100 --count 1 --timeout 600`.
+`brev create esm2-opt-1h-20261024 --type gpu_1x_h100_pcie --count 1 --timeout 600`.
 Do not fall back to a more expensive or multi-GPU type without authorization. Verify the actual device
 with `brev exec esm2-opt-1h-20261024 "nvidia-smi"` before loading the campaign.
 

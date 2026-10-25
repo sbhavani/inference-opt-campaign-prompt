@@ -13,13 +13,13 @@ Commit: `fe8385e4cf4695dd15aca5665ae39aac51892a6f`.
 Primary checkpoint: `nvidia/esm2_t33_650M_UR50D`; smoke checkpoint: `nvidia/esm2_t6_8M_UR50D`.
 Use local model source at that commit and resolve immutable Hub revisions before loading weights.
 
-Assigned device: one dedicated Brev H100 80 GB, single GPU. Prefer the quoted `hyperstack_H100` at $3/hour
+Assigned device: one dedicated Brev H100 80 GB, single GPU. Prefer the quoted `gpu_1x_h100_pcie` at $3.948/hour
 after rechecking its current price and capacity. Instance name: `esm2-opt-1h-20261024`.
 Budget: **1 GPU-hour, at most 60 minutes of allocation including boot/setup and cleanup**.
 Update every **10 minutes**. Record the instance creation-request time in UTC and set the allocation
 deadline to 60 minutes later; do not start that clock while waiting for user authentication. Start cleanup
 at minute 50 or earlier. Record the actual provider billing interval separately; do not promise an exact
-$3 total, since billing and deletion delays may differ from compute runtime.
+$3.948 total, since billing and deletion delays may differ from compute runtime.
 
 This kickoff authorizes one single-H100 allocation for this campaign, at the displayed accepted rate;
 no multi-GPU or higher-cost fallback. Run `brev ls --json` first. If logged out, have the user run
