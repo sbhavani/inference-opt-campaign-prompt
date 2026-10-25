@@ -1,36 +1,54 @@
-# Kickoff message (the T0 user turn) — reconstruction
+# BioNeMo ESM-2 campaign kickoff (the T0 user turn)
 
-> Companion to `inference_opt_campaign_prompt.md`. In the published binder campaigns the long prompt is the
-> *system* context carried by every agent at every depth, and the kickoff is a short *user* message that starts
-> the clock. This mirrors that split.
+> Companion to `inference_opt_campaign_prompt.md`. Fill the three resource placeholders before sending.
+> This message starts an optimization run; editing these prompt files does not start one.
 
-Execute the `<GPU_HOURS>`-hour inference-optimization campaign for `<MODEL>` exactly as specified in the
-campaign prompt. The prompt is in your system context and is also attached to this message as a markdown file;
-the system-context copy is authoritative and is what every sub-agent at every depth carries. You are the
-top-level orchestrator. Do not ask me any questions or wait for approval.
+Execute the BioNeMo Recipes ESM-2 embedding-inference campaign defined in the attached campaign prompt.
+Carry the prompt and the repository instructions into any delegated work. You are the orchestrator.
+Proceed autonomously within the assigned resources; do not request routine implementation approvals.
 
-This is a FRESH campaign in a FRESH workspace. It is not a resume of any prior run; at kickoff there is no
-prior campaign state of yours to reconcile against. The GPU is dedicated to you for the duration — if you
-observe other processes resident on the device, that is an anomaly worth reporting, not an expected condition,
-because it invalidates the measurement protocol.
+This is a fresh campaign in a fresh candidate workspace with a separate immutable reference checkout.
+Repository: https://github.com/NVIDIA-BioNeMo/bionemo-recipes
+Commit: `fe8385e4cf4695dd15aca5665ae39aac51892a6f`.
+Primary checkpoint: `nvidia/esm2_t33_650M_UR50D`; smoke checkpoint: `nvidia/esm2_t6_8M_UR50D`.
+Use local model source at that commit and resolve immutable Hub revisions before loading weights.
 
-Clock: T0 is the timestamp of this message. End time is T0 + `<HOURS>` hours.
+Assigned device: one dedicated NVIDIA H100 80 GB, or the explicitly assigned substitute recorded at T0.
+Budget: `<GPU_HOURS>` GPU-hours. Wall-clock deadline: T0 + `<HOURS>` hours. Update every `<CADENCE>`.
+T0 is receipt of this completed kickoff. Record its timestamp and the deadline in UTC.
+If placeholders are unresolved or no GPU is assigned, report the missing resources and perform only local
+inspection; do not start the clock, provision compute, or infer spending authority.
+Other resident GPU workloads invalidate the quiet-device protocol; report contention before benchmarking.
 
-Your first actions, in this order:
+First actions, in order:
 
-1. Record your model identifier, your orchestrator root frame id, and the campaign tag
-   `optkit-<model>-<YYYY-MM-DD>-<frameid8>`. Use it verbatim in every artifact name.
-2. Bring up the pinned environment and run the full reference-establishment protocol from the Verification
-   section at every size in `<SIZES>`, in the production image with production flags. Write the reference
-   ledger before any optimization work begins. **Block on this.** Nothing downstream is meaningful without it.
-3. Establish `default` — the fastest correct configuration a knowledgeable user could reach without your code
-   — and record how it differs from `base`. State both.
-4. Produce profiles at a small, a middling and a large input size, and post a ranked optimization plan with
-   estimated yield and cost per item. Post it for tracking, not approval.
-5. Then begin.
+1. Record the model identifier, root run identifier (or an explicitly recorded locally generated identifier),
+   and campaign tag `optkit-esm2-<YYYY-MM-DD>-<runid8>`. Read root and closer `AGENTS.md` files.
+2. Verify the BioNeMo pin, immutable checkpoint revisions, checksums, image digest, and dependency versions.
+   Freeze the 100-sequence minimum corpus, a distinct held-out correctness set, masks, and batch manifests.
+   Use total token lengths 64/128/256/512/1024 including BOS/EOS; fixed batches 1/4/16 and mixed batches of 16.
+3. Establish the reference ledger for BF16 TE workloads before optimizing. An 8M smoke run is not a 650M
+   reference. Record OOM cells and unavailable checks. Block optimization on missing reference evidence.
+4. Establish `base` (unmodified BF16 TE defaults) and `default` (best applicable existing TE kernels, layout,
+   packing/bucketing, and runtime settings for the same output contract). Measure configuration-only gains
+   separately. Keep precision and optional vLLM tracks separate. Never use stock HF as the headline denominator.
+5. Freeze the campaign prompt's numerical gates: per-sequence nonpadding embedding NRMSE <= 0.01 and
+   per-token cosine >= 0.999, with its near-zero-vector rule. Use bitwise comparison for `exact`.
+   Seed spread does not define a tolerance for deterministic ESM-2. Preserve masked-LM regressions when
+   shared code changes and the existing vLLM last-token L2-normalized pooling contract if that track is used.
+6. Profile small, medium, large, and mixed-length workloads. Post a ranked list of measured opportunities
+   in the chat or external results bundle, not a planning document committed to the repository. Then begin.
 
-Report at `<CADENCE>`: spend against budget, what landed, what each landed change measured, what was killed and
-why, and the current ranked list. If the clock rather than the budget becomes binding, say so in the next
-update and scale concurrency rather than silently cutting planned work.
+Investigate repeated RoPE/mask setup, packed token-dropout scaling, remaining pack/unpack costs, and graph or
+compiler opportunities only as the profiles justify them. Existing THD/low-precision support is a baseline
+feature. There is no triangle attention in this encoder and no assumed speed-up target.
 
-Begin now.
+At each update report budget and time remaining, accepted changes with measured gains, rejected approaches
+with reasons, correctness failures, and the next measured opportunity. Serialize GPU benchmarks even when
+CPU investigation is delegated. Never increase concurrency or spend to compensate for a deadline without
+remaining assigned resources.
+
+Finish with a scoped BioNeMo patch or draft PR, focused tests, regenerated mapped copies, reproducible
+benchmark commands, and the clean final results bundle. Preserve the immutable reference. Report unavailable
+GPU checks and unsupported modes honestly. Do not provision compute or publish issues/messages without
+separate authorization. Begin when the resource fields and dedicated device are resolved.
