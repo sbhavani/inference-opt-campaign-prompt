@@ -33,7 +33,7 @@ second, and coverage of realistic sequence lengths and mixed-length batches thir
   Exercise the local source at the pinned BioNeMo commit; do not accidentally benchmark only Hub code.
 - Hardware: one dedicated NVIDIA H100 80 GB through Brev. An explicitly assigned alternative is allowed;
   record its exact model, capacity, compute capability, driver, and supported precision features.
-- Resource limits: **1 GPU-hour maximum and 60 minutes wall time**, including setup, verification, and cleanup; report every **10 minutes**.
+- Resource limits: **60 minutes of optimization on one H100**, with setup tracked separately; report every **10 minutes**.
   The allocation deadline is 60 minutes after the instance creation request, conservatively including boot time.\n  Record any provider billing start separately. Do not extend the allocation to compensate for slow setup.
 - Primary interface: `NVEsmModel` / `AutoModel` encoder forward in `eval()` and `torch.inference_mode()`.
   Preserve `last_hidden_state`, optional hidden states, and any requested pooler output.
@@ -57,18 +57,24 @@ minimum and the same numerical gates; cycle those sequences through the selected
 Lengths 64/256, batches of 16, low precision, vLLM, and `big` are deferred unless the mandatory work finishes
 early. Report every omitted cell. Do not weaken correctness or use an unfinished sweep for a headline claim.
 
-Use this time allocation as a ceiling, measured from the creation request:
+**Setup is outside the optimization hour.** Before T0, provision the instance, install and pin the runtime,
+download and checksum checkpoint files, freeze inputs, and pass the 8M smoke check. Report setup duration
+and its cost separately. Provisioning time is billable even though it is not optimization time.
+Do not start the optimization clock while waiting for installation or weight downloads.
 
-- Minutes 0–15: boot, pinned environment and weights, 8M smoke check, workload manifests.
-- Minutes 15–25: 650M references, existing best-configuration comparison, small/large/mixed profiles.
-- Minutes 25–40: one profile-supported change, preferably repeated setup or another small measured gap.
-- Minutes 40–50: final clean timing, held-out correctness, focused regressions, and ablation.
-- Minutes 50–60: export the patch/results, verify local checksums, and complete authorized cleanup.
+Use this allocation within the 60-minute optimization window:
 
-If setup misses its window, reduce optimization effort first. If final evidence cannot be completed,
-deliver a profiling/baseline report or label the candidate unverified. Do not spend a second hour to finish.
-Start cleanup early enough to account for API delays. A remote `timeout` or guest shutdown only stops work;
-it does not prove provider billing has ended. Report any cleanup failure immediately.
+- Minutes 0–15: 650M reference establishment and best-existing-configuration comparisons.
+- Minutes 15–25: small/large/mixed profiles and selection of the measured opportunity.
+- Minutes 25–40: one focused, profile-supported change.
+- Minutes 40–55: final clean timing, held-out correctness, focused regressions, and ablation.
+- Minutes 55–60: finish analysis and save reproducible results; begin no new GPU experiments.
+
+If setup fails, report the blocker and perform authorized cleanup without claiming an optimization run.
+If references or final evidence cannot be completed within the optimization hour, label candidates unverified.
+Stop GPU work at T0 + 60 minutes, export results, verify local checksums, and delete the authorized instance
+promptly. A remote `timeout` or guest shutdown only stops work; it does not prove provider billing has ended.
+Report any cleanup failure immediately. Keep setup, optimization, and cleanup durations distinct.
 
 Before allocation, run `brev ls --json` and `brev search --gpu-name H100 --sort price --json`.
 Prefer a matching idle, user-assigned instance; otherwise show the chosen single-GPU type and current price.
@@ -350,7 +356,8 @@ shippable only with final clean measurements and its matching correctness eviden
 
 ## Compute *[inferred]*
 
-Budget: **1 GPU-hour / 60 minutes total allocation** on the assigned single H100 through Brev. Spend it in this proportion as a starting point: profiling and reference
+Budget: **60 minutes of optimization** on the assigned single H100 through Brev, beginning after setup.
+Track provisioning/setup and cleanup time and their billing separately. Spend it in this proportion as a starting point: profiling and reference
 establishment first and generously, since every later number depends on it; then optimization; then the final
 clean benchmark sweep, which must be run on a quiet machine with nothing else resident. Do not interleave the
 final sweep with development work on the same device. Report spend against budget in every update.

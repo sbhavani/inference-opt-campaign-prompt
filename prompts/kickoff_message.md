@@ -15,13 +15,15 @@ Use local model source at that commit and resolve immutable Hub revisions before
 
 Assigned device: one dedicated Brev H100 80 GB, single GPU. Prefer the quoted `gpu_1x_h100_pcie` at $3.948/hour
 after rechecking its current price and capacity. Instance name: `esm2-opt-1h-20261024`.
-Budget: **1 GPU-hour, at most 60 minutes of allocation including boot/setup and cleanup**.
-Update every **10 minutes**. Record the instance creation-request time in UTC and set the allocation
-deadline to 60 minutes later; do not start that clock while waiting for user authentication. Start cleanup
-at minute 50 or earlier. Record the actual provider billing interval separately; do not promise an exact
-$3.948 total, since billing and deletion delays may differ from compute runtime.
+Budget: **60 minutes of optimization after setup**, on one H100. Update every **10 minutes**.
+Provisioning, environment installation, checkpoint download/checksum verification, and the 8M setup smoke
+check happen before T0. Start T0 only once these are ready, record it in UTC, and set the optimization
+deadline to T0 + 60 minutes. Reference checks, profiling, implementation, and final validation count against
+that hour. Report setup time/cost separately; the instance still accrues charges during setup.
+Stop GPU experiments at the deadline, export and verify results, and promptly perform authorized deletion.
+Report cleanup time and actual provider billing separately. Do not promise an exact total charge.
 
-This kickoff authorizes one single-H100 allocation for this campaign, at the displayed accepted rate;
+This kickoff authorizes one single-H100 allocation for setup plus the one-hour optimization campaign, at the displayed accepted rate;
 no multi-GPU or higher-cost fallback. Run `brev ls --json` first. If logged out, have the user run
 `brev login`. Show the selected cost/type before creation. Confirm authorization to delete only this
 named instance after saving results, or an explicit user choice to retain it with continuing billing,
@@ -47,9 +49,9 @@ First actions, in order:
    Seed spread does not define a tolerance for deterministic ESM-2. Preserve masked-LM regressions when
    shared code changes and the existing vLLM last-token L2-normalized pooling contract if that track is used.
 6. Profile small, medium, large, and mixed-length workloads. Post a ranked list of measured opportunities
-   in the chat or external results bundle, not a planning document committed to the repository. Then attempt at most one focused change, reserving minutes 40–50 for final verification
-   and minutes 50–60 for results export and authorized cleanup. If setup consumes the time, deliver evidence
-   of the blocker or the baseline instead of extending the allocation.
+   in the chat or external results bundle, not a planning document committed to the repository. Then attempt at most one focused change, reserving optimization minutes 40–55 for final verification
+   and minutes 55–60 for analysis and results. Setup does not reduce this hour. If setup cannot finish,
+   report its blocker and perform authorized cleanup without starting the optimization clock.
 
 Investigate repeated RoPE/mask setup, packed token-dropout scaling, remaining pack/unpack costs, and graph or
 compiler opportunities only as the profiles justify them. Existing THD/low-precision support is a baseline

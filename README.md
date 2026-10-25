@@ -31,8 +31,9 @@ separate track with its existing last-token L2-normalized pooling contract.
 ## Using the prompts
 
 1. Supply the campaign prompt as the run's governing instructions, subject to the host's instruction hierarchy.
-2. The kickoff is configured for **one H100 through Brev, one GPU-hour / 60 minutes total allocation**,
-   with updates every 10 minutes. This includes setup and cleanup. Recheck the quoted $3.948/hour
+2. The kickoff is configured for **one H100 through Brev, 60 minutes of optimization after setup**,
+   with updates every 10 minutes. Provisioning, runtime installation, checkpoint downloads, and the setup
+   smoke check occur before the optimization clock starts; their time and billing are reported separately. Recheck the quoted $3.948/hour
    `gpu_1x_h100_pcie` price/capacity; no higher-cost fallback is authorized. Authenticate with `brev login`.
    Resolve deletion authorization for the named instance, or explicitly choose retention and ongoing billing,
    before creating it. A remote job timeout does not terminate provider billing.
@@ -40,9 +41,10 @@ separate track with its existing last-token L2-normalized pooling contract.
 4. Send the completed kickoff. Merely editing these files does not start a campaign.
 
 The one-hour pilot prioritizes lengths 128/512/1024 at batches 1 and 4, one mixed batch of 4, and at most
-one focused optimization. The broader matrix remains deferred. It reserves the last 20 minutes for final
-verification, result export, and cleanup; setup delays reduce optimization time rather than extend billing.
-No speed-up is promised within one hour.
+one focused optimization. The broader matrix remains deferred. It reserves optimization minutes 40–55
+for final verification and 55–60 for analysis. Setup does not reduce the optimization hour. Stop GPU work
+at the deadline, export the results, and promptly delete the authorized instance. Actual billed time includes
+setup and cleanup as well as optimization. No speed-up is promised within one hour.
 
 The campaign requires reference establishment before optimization, a quiet GPU, bracketed timing repeats,
 and a final clean benchmark sweep. It produces a scoped BioNeMo patch or draft PR, focused regression tests,
